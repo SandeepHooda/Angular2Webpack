@@ -28,7 +28,7 @@ const HMR = helpers.hasProcessFlag('hot');
 const AOT = helpers.hasNpmFlag('aot');
 const METADATA = {
   title: 'Angular2 Webpack Starter by @gdi2290 from @AngularClass',
-  baseUrl: '/',
+  baseUrl: '',
   isDevServer: helpers.isWebpackDevServer()
 };
 
@@ -37,10 +37,12 @@ const METADATA = {
  *
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
-module.exports = function (options) {
-  isProd = options.env === 'production';
-  return {
 
+ function commonWebpack(options) {
+  isProd = options.env === 'production';
+ 
+  return {
+	
   
     /*
      * Cache generated modules and chunks to improve performance for multiple incremental builds.
@@ -273,17 +275,7 @@ module.exports = function (options) {
 
       
 
-      /*
-       * Plugin: ScriptExtHtmlWebpackPlugin
-       * Description: Enhances html-webpack-plugin functionality
-       * with different deployment options for your scripts including:
-       *
-       * See: https://github.com/numical/script-ext-html-webpack-plugin
-       */
-      new ScriptExtHtmlWebpackPlugin({
-        defaultAttribute: 'defer'
-      }),
-
+     
       /*
        * Plugin: HtmlElementsPlugin
        * Description: Generate html tags based on javascript maps.
@@ -363,4 +355,9 @@ module.exports = function (options) {
     }
 
   };
-}
+};
+ module.exports = {
+    commonWebpack: commonWebpack,
+    metadata : METADATA
+};
+ 

@@ -26,9 +26,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 8080;
-const METADATA = webpackMerge(commonConfig({
-  env: ENV
-}).metadata, {
+const METADATA = webpackMerge(commonConfig.metadata, {
   host: HOST,
   port: PORT,
   ENV: ENV,
@@ -36,9 +34,7 @@ const METADATA = webpackMerge(commonConfig({
 });
 
 module.exports = function (env) {
-  return webpackMerge(commonConfig({
-    env: ENV
-  }), {
+  return webpackMerge(commonConfig.commonWebpack({env: ENV}), {
 
     /**
      * Developer tool to enhance debugging

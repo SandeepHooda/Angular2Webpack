@@ -17,6 +17,7 @@ const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
 
 /**
  * Webpack Constants
@@ -26,9 +27,7 @@ const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3000;
 const HMR = helpers.hasProcessFlag('hot');
 
-const METADATA = webpackMerge(commonConfig({
-  env: ENV
-}).metadata, {
+const METADATA = webpackMerge(commonConfig.metadata, {
   host: HOST,
   port: PORT,
   ENV: ENV,
@@ -44,7 +43,8 @@ const METADATA = webpackMerge(commonConfig({
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = function (options) {
-  return webpackMerge(commonConfig({env: ENV}), {
+	console.log(" ############## isDevServer ############# =="+commonConfig.metadata.isDevServer)
+  return webpackMerge(commonConfig.commonWebpack({env: ENV}), {
 
     /**
      * Developer tool to enhance debugging
@@ -162,14 +162,31 @@ module.exports = function (options) {
       }),
 	  new HtmlWebpackPlugin({  //  generate a index-debug.html
       filename: 'index-debug.html',
-      template: 'src/index-debug.html',
+      template: 'src/index.html',
         title: METADATA.title,
         chunksSortMode: 'dependency',
         metadata: METADATA,
         inject: 'head'
     }),
 
+	
     
+ /**
+       * Plugin: NormalModuleReplacementPlugin
+       * Description: Replace resources that matches resourceRegExp with newResource
+       *
+       * See: http://webpack.github.io/docs/list-of-plugins.html#normalmodulereplacementplugin
+       */
+
+      new NormalModuleReplacementPlugin(
+        /angular2-hmr/,
+        helpers.root('config/empty.js')
+      ),
+
+      new NormalModuleReplacementPlugin(
+        /zone\.js(\\|\/)dist(\\|\/)long-stack-trace-zone/,
+        helpers.root('config/empty.js')
+      ),
 
       
 	  
@@ -196,9 +213,33 @@ module.exports = function (options) {
        *
        * See: https://gist.github.com/sokra/27b24881210b56bbaff7
        */
+      /**
+       * Plugin LoaderOptionsPlugin (experimental)
+       *
+       * See: https://gist.github.com/sokra/27b24881210b56bbaff7
+       */
       new LoaderOptionsPlugin({
+    
         debug: true,
         options: {
+
+          /**
+           * Html loader advanced options
+           *
+           * See: https://github.com/webpack/html-loader#advanced-options
+           */
+          // TODO: Need to workaround Angular 2's html syntax => #id [bind] (event) *ngFor
+          htmlLoader: {
+           
+            removeAttributeQuotes: false,
+            caseSensitive: true,
+            customAttrSurround: [
+              [/#/, /(?:)/],
+              [/\*/, /(?:)/],
+              [/\[?\(?/, /(?:)/]
+            ],
+            customAttrAssign: [/\)?\]?=/]
+          },
 
         }
       }),
@@ -232,7 +273,7 @@ module.exports = function (options) {
     node: {
       global: true,
       crypto: 'empty',
-      process: true,
+      process: false,
       module: false,
       clearImmediate: false,
       setImmediate: false
