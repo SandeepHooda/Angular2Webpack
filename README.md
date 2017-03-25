@@ -57,13 +57,16 @@ This seed repo serves as an Angular 2 starter for anyone looking to get up and r
 ```bash
 # clone our repo
 # --depth 1 removes all but one .git commit history
-git clone --depth 1 https://github.com/angularclass/angular2-webpack-starter.git
+Clone the repo
 
 # change directory to our repo
-cd angular2-webpack-starter
+cd <to the folder>
 
 # install the repo with npm
 npm install
+
+#build minified (index.html) and non-minified files (index-debug.html) in the dist folder, Then copy paster the dist folder in any web server like tomcat.
+npm run clean:dist && webpack --config config/webpack.dev.js && webpack --config config/webpack.prod.js
 
 # start the server
 npm start
