@@ -68,6 +68,9 @@ npm install
 #build minified (index.html) and non-minified files (index-debug.html) in the dist folder, Then copy paster the dist folder in any web server like tomcat.
 npm run clean:dist && webpack --config config/webpack.dev.js && webpack --config config/webpack.prod.js
 
+#Sandeep - to do aot build and index-debug.html run the below command, Then copy paster the dist folder in any web server like tomcat.
+npm run build:aot && webpack --config config/webpack.dev.js 
+
 # start the server
 npm start
 
